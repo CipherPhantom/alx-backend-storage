@@ -27,3 +27,12 @@ if __name__ == "__main__":
                 "method": "GET",
                 "path": "/status"
                 })))
+        pipeline = [
+            {"$group": {"_id": "$ip", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}},
+            {"$limit": 10}
+            ]
+        result = list(nginx_collection.aggregate(pipeline))
+        print("IPs:")
+        for entry in result:
+            print("\t{}: {}".format(entry["_id"], entry["count"]))
